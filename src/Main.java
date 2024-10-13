@@ -1,5 +1,6 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.sound.sampled.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URISyntaxException;
@@ -9,6 +10,7 @@ import java.util.List;
 
 public class Main {
     static final boolean SHOW_VISUALIZATION = true;
+    static final boolean PLAY_SOUND = true;
     static final boolean LOAD_FROM_FILE = true;
     static final boolean SEND_REQUESTS = false;
     static final boolean DEBUG = false;
@@ -18,7 +20,7 @@ public class Main {
     static ObjectMapper MAPPER = new ObjectMapper();
     static List<String> logs = new ArrayList<>();
 
-    public static void main(String[] args) throws InterruptedException, IOException, URISyntaxException {
+    public static void main(String[] args) throws InterruptedException, IOException, LineUnavailableException, UnsupportedAudioFileException {
         if (SHOW_VISUALIZATION) {
             v = new Visualizer();
             if (LOAD_FROM_FILE) {
@@ -33,6 +35,13 @@ public class Main {
                     frames.add(frame);
                 }
                 v.setFrames(frames);
+            }
+            if (PLAY_SOUND) {
+                File soundFile = new File("piano.wav");
+                AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundFile);
+                Clip clip = AudioSystem.getClip();
+                clip.open(audioStream);
+                clip.start();
             }
         }
         if (SEND_REQUESTS) {
@@ -60,7 +69,7 @@ public class Main {
                     long calculation = System.currentTimeMillis() - responseTime;
                     long latency = responseTime - requestTime;
                     long elapsedTime = calculation + latency;
-                    System.out.println("Time: " + elapsedTime + " ms. Latency: " + latency + " ms, calc: " + calculation +" ms");
+                    System.out.println("Time: " + elapsedTime + " ms. Latency: " + latency + " ms, calc: " + calculation + " ms");
                     long remainingTime = Math.max(1, 350 - elapsedTime);
                     Thread.sleep(remainingTime);
                 } catch (Exception e) {
