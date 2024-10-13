@@ -41,6 +41,7 @@ public class Main {
                 AudioInputStream audioStream = AudioSystem.getAudioInputStream(soundFile);
                 Clip clip = AudioSystem.getClip();
                 clip.open(audioStream);
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
                 clip.start();
             }
         }
